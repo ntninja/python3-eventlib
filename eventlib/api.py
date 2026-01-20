@@ -108,9 +108,9 @@ def tcp_server(listensocket, server, *args, **kw):
         The socket from which to accept connections.
     server
         The callable to call when a new connection is made.
-    \*args
+    *args
         The positional arguments to pass to *server*.
-    \*\*kw
+    **kw
         The keyword arguments to pass to *server*.
     """
     print(("tcpserver spawning %s on %s" % (server, listensocket.getsockname())))
