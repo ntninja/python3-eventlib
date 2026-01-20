@@ -19,12 +19,10 @@
 
 import errno
 import os
-import popen2
 import signal
+import subprocess
 
-from eventlib import coros
-from eventlib import pools
-from eventlib import greenio
+from eventlib import coros, greenio, pools
 
 
 class DeadProcess(RuntimeError):
@@ -98,10 +96,10 @@ class Process(object):
         self.popen4 = None
 
         ## We use popen4 so that read() will read from either stdout or stderr
-        self.popen4 = popen2.Popen4([self.command] + self.args)
+        self.popen4 = subprocess.Popen([self.command] + self.args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, close_fds=True, text=True)
         self.event = _add_child_pobj(self.popen4)
-        child_stdout_stderr = self.popen4.fromchild
-        child_stdin = self.popen4.tochild
+        child_stdout_stderr = self.popen4.stdout
+        child_stdin = self.popen4.stdin
         greenio.set_nonblocking(child_stdout_stderr)
         greenio.set_nonblocking(child_stdin)
         self.child_stdout_stderr = greenio.GreenPipe(child_stdout_stderr)
